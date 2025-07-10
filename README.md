@@ -14,7 +14,7 @@ Manual `.evtx` analysis is slow, clunky, and frustrating. TheLogRipper gives you
 - Fast extraction of useful metadata
 - Optional export for offline analysis or reporting
 
-Whether you're triaging a system post-breach or trying to track a specific type of event — this is your drop-in forensic blade.
+Whether you're triaging a system post-breach or trying to track a specific type of event this is your drop-in forensic blade.
 
 ---
 
