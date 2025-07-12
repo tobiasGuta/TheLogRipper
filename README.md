@@ -117,7 +117,7 @@ My PowerShell script doesn't just parse logs it actively detects potential malic
 
 In one analyzed Sysmon log(Sysmon is an external tool not installed by default.), a user named **sarah.miller** downloads a file (`ckjg.exe`) and then executes it. The script flags this as suspicious and assigns a risk score to help prioritize investigations.
 
--   We can see the executable file appear in **Event ID 1** (process creation).
+-   We can see the executable file appear in **Event ID 1** (process creation). [Sysmon Event ID 1 - Process creation](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001)
 
 <img width="1498" height="711" alt="image" src="https://github.com/user-attachments/assets/e7398ef5-61aa-4ecd-bd9d-59529ef352f3" />
 
@@ -125,7 +125,7 @@ In one analyzed Sysmon log(Sysmon is an external tool not installed by default.)
 
 ### Why Event ID 15 Matters
 
-Event ID 15 captures metadata attached to downloaded files, like the **Zone.Identifier** stream in Windows. This stream stores the original URL the file was downloaded from.
+Event ID 15 captures metadata attached to downloaded files, like the **Zone.Identifier** stream in Windows. This stream stores the original URL the file was downloaded from. [Sysmon Event ID 15 - FileCreateStreamHash](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90015)
 
 For Sarah's case, Event ID 15 reveals:
 
