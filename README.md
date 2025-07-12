@@ -107,7 +107,7 @@ https://github.com/user-attachments/assets/f83b2018-d994-4b2a-929f-c856fd18620c
 These filters are optional and only appear **when authentication events (e.g., 4624/4625)** are detected.  
 Perfect for narrowing down brute force attempts, RDP logons, or lateral movement.
 
-Still under development more features coming.
+> Still under development more features coming.
 
 ### Contributing / Feature Ideas
 
