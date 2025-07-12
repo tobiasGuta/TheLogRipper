@@ -113,9 +113,6 @@ Perfect for narrowing down brute force attempts, RDP logons, or lateral movement
 
 Pull requests and feature ideas are welcome. Some ideas on the roadmap:
 
-- Command-line arg parsing
 - Regex keyword filter input
-- GUI version (WinForms or WPF)
-- YAML/JSON config-driven automation
 
 
