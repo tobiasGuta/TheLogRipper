@@ -24,6 +24,75 @@ function Prompt-Choice($message, $options) {
     }
 }
 
+function Run-CorrelationSummary {
+    param ($LogPath)
+
+    $UserCreationMap = @{}
+    $UserGroupMap = @{}
+
+    $events = Get-WinEvent -Path $LogPath | Where-Object { $_.Id -in @(4720, 4732) }
+
+    foreach ($event in $events) {
+        try {
+            [xml]$xml = $event.ToXml()
+        } catch {
+            Write-Warning "Skipping malformed event..."
+            continue
+        }
+
+        $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
+        $nsMgr.AddNamespace("e", "http://schemas.microsoft.com/win/2004/08/events/event")
+        $dataNodes = $xml.SelectNodes("//e:EventData/e:Data", $nsMgr)
+
+        $data = @{}
+        foreach ($node in $dataNodes) {
+            $name = if ($node.Attributes["Name"]) { $node.Attributes["Name"].Value } else { "Unknown" }
+            $val = if ($node.'#text') { $node.'#text' } else { "null" }
+            $data[$name] = $val
+        }
+
+        if ($event.Id -eq 4720) {
+            $TargetUserName = $data["TargetUserName"]
+            $TargetSid = $data["TargetSid"]
+            $CreatedBy = $data["SubjectUserName"]
+            $LogonId = $data["SubjectLogonId"]
+
+            $UserCreationMap[$TargetSid] = @{
+                UserName = $TargetUserName
+                CreatedBy = $CreatedBy
+                LogonId = $LogonId
+            }
+
+        } elseif ($event.Id -eq 4732) {
+            $MemberSid = $data["MemberSid"]
+            $GroupName = $data["TargetUserName"]
+
+            if (-not $UserGroupMap.ContainsKey($MemberSid)) {
+                $UserGroupMap[$MemberSid] = @()
+            }
+            $UserGroupMap[$MemberSid] += $GroupName
+        }
+    }
+
+    Write-Host "`n===== User Creation + Group Membership Summary =====" -ForegroundColor Cyan
+    foreach ($sid in $UserCreationMap.Keys) {
+        $entry = $UserCreationMap[$sid]
+        $groups = $UserGroupMap[$sid]
+
+        Write-Host "`n[+] User Created: $($entry.UserName)" -ForegroundColor Green
+        Write-Host "    Created By : $($entry.CreatedBy)"
+        Write-Host "    LogonId    : $($entry.LogonId)"
+        if ($groups) {
+            $uniqueGroups = $groups | Sort-Object -Unique
+            Write-Host "    Groups     : $($uniqueGroups -join ', ')" -ForegroundColor Yellow
+        } else {
+            Write-Host "    Groups     : None" -ForegroundColor DarkYellow
+        }
+    }
+
+    Write-Host "`nDone." -ForegroundColor Cyan
+}
+
 function Run-LogRipper {
     $logPath = Read-Host "Enter full path to .evtx log file (or type 'exit' to quit)"
     if ($logPath -eq "exit") { exit }
@@ -36,6 +105,18 @@ function Run-LogRipper {
     $idInput = Read-Host "Enter Event ID(s) to analyze (comma separated, e.g., 1074,4624)"
     $eventIDsToWatch = $idInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
 
+    # If analyzing user management events, ask if want auto summary
+    $wantsAutoSummary = $false
+    if ($eventIDsToWatch -contains 4720 -and $eventIDsToWatch -contains 4732) {
+        $wantsAutoSummary = Prompt-YesNo "Want to run a User Creation + Group Membership Summary automatically"
+    }
+
+    if ($wantsAutoSummary) {
+        Run-CorrelationSummary -LogPath $logPath
+        return
+    }
+
+    # Normal filtering for other event IDs, or if user says no to summary
     $authEventIDs = @(4624, 4625)
     $advancedFilters = @{}
 
