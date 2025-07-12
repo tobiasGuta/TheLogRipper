@@ -4,7 +4,7 @@
 
 ---
 
-## 🔍 Why Use TheLogRipper?
+## Why Use TheLogRipper?
 
 Because Event Viewer sucks when you're on a mission.
 
@@ -18,7 +18,7 @@ Whether you're triaging a system post-breach or trying to track a specific type 
 
 ---
 
-## ⚙️ Features
+## Features
 
 - Interactive prompt-based interface
 - Supports multiple Event IDs at once
@@ -32,7 +32,7 @@ Whether you're triaging a system post-breach or trying to track a specific type 
 
 ---
 
-## 📥 Usage
+## Usage
 
 ### 1. Clone the repo:
 ```bash
@@ -63,9 +63,9 @@ TheLogRipper flags fields containing known suspicious keywords like:
 
 https://github.com/user-attachments/assets/2a4708f7-54cd-49dd-955d-f3f4cbce252b
 
-## 🧠 TheLogRipper Versions Explained
+## TheLogRipper Versions Explained
 
-### 🔹 TheLogRipper.ps1 (Stable)
+### TheLogRipper.ps1 (Stable)
 This is the original version of the tool. It performs event log analysis based on specified Event IDs and highlights suspicious values in common fields like `DataValues`. It’s reliable and simple — ideal for general log inspection or incident triage.
 
 - ✅ Takes `.evtx` file input
@@ -77,35 +77,39 @@ This is the original version of the tool. It performs event log analysis based o
 
 ---
 
-### 🔸 TheLogRipper2.0.ps1 (Advanced, In Progress)
+### TheLogRipper2.0.ps1 (Advanced, In Progress)
 This version builds on the original by introducing **conditional smart filtering** for authentication events like `4624` and `4625`. It prompts the user for more specific filtering **only when** those event types are present.
 
-#### 🔍 Features added in 2.0:
+#### Features added in 2.0:
 
-- 🧠 Detection of authentication-related events
-- 🔐 Optional filter prompts:
+- Detection of authentication-related events
+- Optional filter prompts:
   - Logon Type(s) (e.g., 3, 10)
   - TargetUserName (e.g., Administrator)
   - IpAddress (e.g., 10.10.53.248)
-- 🛡️ More fine-tuned triage for brute force, lateral movement, and failed logon attempts
-- 💬 Future plans: coming soon
+-  More fine-tuned triage for brute force, lateral movement, and failed logon attempts
+-  Future plans: coming soon
 
-> ⚠️ This version is actively being enhanced. Expect rapid updates and experimental logic.
-
----
-
-### 📌 TL;DR
-
-| Version | Status | Best For | Features |
-|--------|--------|----------|----------|
-| `TheLogRipper.ps1` | ✅ Stable | Basic Event Log Analysis | Event ID filtering, suspicious term matching |
-| `TheLogRipper2.0.ps1` | 🚧 In Progress | Threat Hunting / Logon Event Triage | Smart filters: LogonType, TargetUserName, IpAddress |
-
----
+> This version is actively being enhanced. Expect rapid updates and experimental logic.
 
 ## Example Session
 
-### 🛠️ Contributing / Feature Ideas
+https://github.com/user-attachments/assets/f83b2018-d994-4b2a-929f-c856fd18620c
+
+### This video demonstrates how TheLogRipper2.0.ps1 improves over the original version:
+
+- First half: Running **without filters** shows **all matching logs** (4624, 4625)
+- Second half: Running **with advanced filters** shows **only logs** matching:
+  - LogonType: 10 or 3
+  - TargetUserName: Administrator
+  - IpAddress: 10.10.53.248
+
+These filters are optional and only appear **when authentication events (e.g., 4624/4625)** are detected.  
+Perfect for narrowing down brute force attempts, RDP logons, or lateral movement.
+
+Still under development more features coming.
+
+### Contributing / Feature Ideas
 
 Pull requests and feature ideas are welcome. Some ideas on the roadmap:
 
