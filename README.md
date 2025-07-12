@@ -135,6 +135,12 @@ For Sarah's case, Event ID 15 reveals:
 
 This tells us exactly which URL the suspicious executable was fetched from.
 
+### Summary
+
+-   TheLogRipper2.0 combines multiple event IDs to build a clearer picture of suspicious activity.
+
+-   It scores risk so analysts can focus on the worst threats first.
+
 ## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
 We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
 
