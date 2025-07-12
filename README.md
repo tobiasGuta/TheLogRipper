@@ -63,5 +63,55 @@ TheLogRipper flags fields containing known suspicious keywords like:
 
 https://github.com/user-attachments/assets/2a4708f7-54cd-49dd-955d-f3f4cbce252b
 
+## 🧠 TheLogRipper Versions Explained
+
+### 🔹 TheLogRipper.ps1 (Stable)
+This is the original version of the tool. It performs event log analysis based on specified Event IDs and highlights suspicious values in common fields like `DataValues`. It’s reliable and simple — ideal for general log inspection or incident triage.
+
+- ✅ Takes `.evtx` file input
+- ✅ Filters by Event ID
+- ✅ Highlights suspicious terms (e.g., PowerShell, base64, etc.)
+- ✅ Optional export to JSON/CSV
+
+> Use this if you want a solid base log parser without too much complexity.
+
+---
+
+### 🔸 TheLogRipper2.0.ps1 (Advanced, In Progress)
+This version builds on the original by introducing **conditional smart filtering** for authentication events like `4624` and `4625`. It prompts the user for more specific filtering **only when** those event types are present.
+
+#### 🔍 Features added in 2.0:
+
+- 🧠 Detection of authentication-related events
+- 🔐 Optional filter prompts:
+  - Logon Type(s) (e.g., 3, 10)
+  - TargetUserName (e.g., Administrator)
+  - IpAddress (e.g., 10.10.53.248)
+- 🛡️ More fine-tuned triage for brute force, lateral movement, and failed logon attempts
+- 💬 Future plans: coming soon
+
+> ⚠️ This version is actively being enhanced. Expect rapid updates and experimental logic.
+
+---
+
+### 📌 TL;DR
+
+| Version | Status | Best For | Features |
+|--------|--------|----------|----------|
+| `TheLogRipper.ps1` | ✅ Stable | Basic Event Log Analysis | Event ID filtering, suspicious term matching |
+| `TheLogRipper2.0.ps1` | 🚧 In Progress | Threat Hunting / Logon Event Triage | Smart filters: LogonType, TargetUserName, IpAddress |
+
+---
+
+## Example Session
+
+### 🛠️ Contributing / Feature Ideas
+
+Pull requests and feature ideas are welcome. Some ideas on the roadmap:
+
+- Command-line arg parsing
+- Regex keyword filter input
+- GUI version (WinForms or WPF)
+- YAML/JSON config-driven automation
 
 
