@@ -109,6 +109,32 @@ Perfect for narrowing down brute force attempts, RDP logons, or lateral movement
 
 > Still under development more features coming.
 
+## Malicious Activity Detection & Analysis with TheLogRipper2.0
+
+My PowerShell script doesn't just parse logs it actively detects potential malicious activity and assigns a **risk score** based on suspicious behaviors. For example, it can flag when a user downloads and executes a suspicious file.
+
+### Real-World Example: Sarah.Miller's Download & Execution
+
+In one analyzed Sysmon log, a user named **sarah.miller** downloads a file (`ckjg.exe`) and then executes it. The script flags this as suspicious and assigns a risk score to help prioritize investigations.
+
+-   We can see the executable file appear in **Event ID 1** (process creation).
+
+<img width="1498" height="711" alt="image" src="https://github.com/user-attachments/assets/e7398ef5-61aa-4ecd-bd9d-59529ef352f3" />
+
+-   But to find **where the file was downloaded from**, we dig into **Event ID 15** (File Create Stream Hash), which logs Alternate Data Streams.
+
+### Why Event ID 15 Matters
+
+Event ID 15 captures metadata attached to downloaded files, like the **Zone.Identifier** stream in Windows. This stream stores the original URL the file was downloaded from.
+
+For Sarah's case, Event ID 15 reveals:
+
+`HostUrl=http://gettsveriff.com/bgj3/ckjg.exe`
+
+<img width="1420" height="523" alt="image" src="https://github.com/user-attachments/assets/172d7ab7-10c7-41fd-8eb9-9f53166485c9" />
+
+This tells us exactly which URL the suspicious executable was fetched from.
+
 ## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
 We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
 
