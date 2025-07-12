@@ -139,6 +139,10 @@ We can also investigate Event ID 11 and 13, which correspond to File Create and 
 
 <img width="1141" height="474" alt="image" src="https://github.com/user-attachments/assets/f5cc8e14-c9ab-40c3-ae97-d1335eff6099" />
 
+If we want to investigate Event IDs 3 and 22 (Network Connection and DNS Query), the script will show you everything you need to know.
+
+<img width="1124" height="649" alt="image" src="https://github.com/user-attachments/assets/7b1fcc2c-f00e-4f7e-9d01-ad9d03c2a0e3" />
+
 ## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
 We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
 
