@@ -109,6 +109,29 @@ Perfect for narrowing down brute force attempts, RDP logons, or lateral movement
 
 > Still under development more features coming.
 
+## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
+We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
+
+### When both event IDs are selected, the script now prompts:
+
+"Want to run a User Creation + Group Membership Summary automatically?"
+
+If you choose yes, it will:
+
+- Detect new users created (Event ID 4720)
+
+- Check which groups (e.g., Administrators, Remote Desktop Users) the user was added to shortly after (Event ID 4732)
+
+### Correlate using the SID and Logon ID to show:
+
+- Who created the user
+
+- What groups the user was added to
+
+## Example
+
+<img width="956" height="243" alt="Screenshot 2025-07-12 182931" src="https://github.com/user-attachments/assets/e056a81c-d294-4855-b290-014ee3736713" />
+
 ### Contributing / Feature Ideas
 
 Pull requests and feature ideas are welcome. Some ideas on the roadmap:
