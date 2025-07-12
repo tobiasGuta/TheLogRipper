@@ -143,6 +143,8 @@ If we want to investigate Event IDs 3 and 22 (Network Connection and DNS Query),
 
 <img width="1124" height="649" alt="image" src="https://github.com/user-attachments/assets/7b1fcc2c-f00e-4f7e-9d01-ad9d03c2a0e3" />
 
+<img width="1062" height="486" alt="image" src="https://github.com/user-attachments/assets/084dcd08-be82-4844-8187-9b638bf85ec0" />
+
 ## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
 We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
 
