@@ -115,7 +115,7 @@ My PowerShell script doesn't just parse logs it actively detects potential malic
 
 ### Real-World Example: Sarah.Miller's Download & Execution
 
-In one analyzed Sysmon log, a user named **sarah.miller** downloads a file (`ckjg.exe`) and then executes it. The script flags this as suspicious and assigns a risk score to help prioritize investigations.
+In one analyzed Sysmon log(Sysmon is an external tool not installed by default.), a user named **sarah.miller** downloads a file (`ckjg.exe`) and then executes it. The script flags this as suspicious and assigns a risk score to help prioritize investigations.
 
 -   We can see the executable file appear in **Event ID 1** (process creation).
 
