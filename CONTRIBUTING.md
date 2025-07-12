@@ -61,15 +61,6 @@ Go to your forked repo and click "New Pull Request." Fill out the PR template:
 
 ---
 
-## Feature Ideas (PRs welcome!)
-- CLI argument support (`-EventIDs`, `-Username`, etc.)
-- Export to custom directory
-- More event ID presets (Sysmon, AppLocker, etc.)
-- GUI front-end
-- YAML/JSON config loading
-
----
-
 ##  Need Help?
 Open an issue with the label `question` or `help wanted`, and we’ll take a look ASAP.
 
