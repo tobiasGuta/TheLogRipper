@@ -170,9 +170,9 @@ If you choose yes, it will:
 
 ## TheLogRipper2.0.ps1 — Last Update:
 
-Added support to check all Event IDs (type "all" to select every event)
+- Added support to check all Event IDs (type "all" to select every event)
 
-Introduced two new filters: WorkstationName and External IPs filtering
+- Introduced two new filters: WorkstationName and External IPs filtering
 
 ## example 
 
