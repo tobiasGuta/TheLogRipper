@@ -168,6 +168,16 @@ If you choose yes, it will:
 
 <img width="956" height="243" alt="Screenshot 2025-07-12 182931" src="https://github.com/user-attachments/assets/e056a81c-d294-4855-b290-014ee3736713" />
 
+## TheLogRipper2.0.ps1 — Last Update:
+
+Added support to check all Event IDs (type "all" to select every event)
+
+Introduced two new filters: WorkstationName and External IPs filtering
+
+## example 
+
+<img width="1892" height="777" alt="image" src="https://github.com/user-attachments/assets/426da6ee-cac3-40b9-938d-003323be050e" />
+
 ### Contributing / Feature Ideas
 
 Pull requests and feature ideas are welcome. Some ideas on the roadmap:
