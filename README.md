@@ -36,7 +36,7 @@ Whether you're triaging a system post-breach or trying to track a specific type 
 
 ### 1. Clone the repo:
 ```bash
-git clone https://github.com/yourusername/TheLogRipper.git
+git clone https://github.com/tobiasGuta/TheLogRipper.git
 cd TheLogRipper
 ```
 ### 2. Run the script:
