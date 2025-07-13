@@ -145,7 +145,7 @@ If we want to investigate Event IDs 3 and 22 (Network Connection and DNS Query),
 
 <img width="1062" height="486" alt="image" src="https://github.com/user-attachments/assets/084dcd08-be82-4844-8187-9b638bf85ec0" />
 
-## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)
+## TheLogRipper2.0.ps1 Last Update: User Management Correlation (Event IDs 4720 & 4732)(07/12/2025)
 We added a new automatic correlation feature for User Account Creation (4720) and Security Group Membership Changes (4732).
 
 ### When both event IDs are selected, the script now prompts:
@@ -168,7 +168,7 @@ If you choose yes, it will:
 
 <img width="956" height="243" alt="Screenshot 2025-07-12 182931" src="https://github.com/user-attachments/assets/e056a81c-d294-4855-b290-014ee3736713" />
 
-## TheLogRipper2.0.ps1 — Last Update:
+## TheLogRipper2.0.ps1 — Last Update(07/13/2025):
 
 - Added support to check all Event IDs (type "all" to select every event)
 
@@ -178,10 +178,6 @@ If you choose yes, it will:
 
 <img width="1892" height="777" alt="image" src="https://github.com/user-attachments/assets/426da6ee-cac3-40b9-938d-003323be050e" />
 
-### Contributing / Feature Ideas
 
-Pull requests and feature ideas are welcome. Some ideas on the roadmap:
-
-- Regex keyword filter input
 
 
