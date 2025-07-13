@@ -174,7 +174,7 @@ If you choose yes, it will:
 
 - Introduced two new filters: WorkstationName and External IPs filtering
 
-## example 
+## Example 
 
 <img width="1892" height="777" alt="image" src="https://github.com/user-attachments/assets/426da6ee-cac3-40b9-938d-003323be050e" />
 
