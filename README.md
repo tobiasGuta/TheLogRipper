@@ -6,7 +6,7 @@
 
 ## Why Use TheLogRipper?
 
-Because Event Viewer sucks when you're on a mission.
+Because Event Viewer sucks.
 
 Manual `.evtx` analysis is slow, clunky, and frustrating. TheLogRipper gives you:
 - CLI-based interaction
