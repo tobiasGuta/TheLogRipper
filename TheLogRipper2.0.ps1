@@ -116,6 +116,18 @@ function Run-LogRipper {
         $eventIDsToWatch = $idInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
     }
 
+    # --- NEW for Event ID 22 filtering ---
+    $imageFilter = $null
+    $processIdFilter = $null
+    if ($eventIDsToWatch -contains 22) {
+        if (Prompt-YesNo "Want to filter for Image path (yes/no)?") {
+            $imageFilter = Read-Host "Enter Image Filter (full path or partial)"
+        }
+        if (Prompt-YesNo "Want to filter for ProcessID (yes/no)?") {
+            $processIdFilter = Read-Host "Enter ProcessID (number)"
+        }
+    }
+
     $wantsAutoSummary = $false
     if ($eventIDsToWatch -contains 4720 -and $eventIDsToWatch -contains 4732) {
         $wantsAutoSummary = Prompt-YesNo "Want to run a User Creation + Group Membership Summary automatically"
@@ -171,20 +183,20 @@ function Run-LogRipper {
 
         if (-not $eventMatch) { return $false }
 
-        if (($authEventIDs -contains $_.Id) -and ($advancedFilters.Count -gt 0)) {
-            try {
-                [xml]$xml = $_.ToXml()
-                $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
-                $nsMgr.AddNamespace("e", "http://schemas.microsoft.com/win/2004/08/events/event")
+        try {
+            [xml]$xml = $_.ToXml()
+            $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
+            $nsMgr.AddNamespace("e", "http://schemas.microsoft.com/win/2004/08/events/event")
 
-                $dataNodes = $xml.SelectNodes("//e:EventData/e:Data", $nsMgr)
-                $dataHash = @{}
-                foreach ($node in $dataNodes) {
-                    $name = if ($node.Attributes["Name"]) { $node.Attributes["Name"].Value } else { "Unknown" }
-                    $val = if ($node.'#text') { $node.'#text' } else { "" }
-                    $dataHash[$name] = $val
-                }
+            $dataNodes = $xml.SelectNodes("//e:EventData/e:Data", $nsMgr)
+            $dataHash = @{}
+            foreach ($node in $dataNodes) {
+                $name = if ($node.Attributes["Name"]) { $node.Attributes["Name"].Value } else { "Unknown" }
+                $val = if ($node.'#text') { $node.'#text' } else { "" }
+                $dataHash[$name] = $val
+            }
 
+            if (($authEventIDs -contains $_.Id) -and ($advancedFilters.Count -gt 0)) {
                 if ($advancedFilters.LogonTypes -and ($dataHash["LogonType"] -notin $advancedFilters.LogonTypes)) {
                     return $false
                 }
@@ -204,11 +216,21 @@ function Run-LogRipper {
                 if ($advancedFilters.WorkstationName -and ($dataHash["WorkstationName"] -ne $advancedFilters.WorkstationName)) {
                     return $false
                 }
-
-            } catch {
-                Write-Warning "Could not parse advanced filters for event"
-                return $false
             }
+
+            # --- NEW for Event ID 22 filtering ---
+            if ($_.Id -eq 22) {
+                if ($imageFilter -and ($dataHash["Image"] -notlike "*$imageFilter*")) {
+                    return $false
+                }
+                if ($processIdFilter -and ($dataHash["ProcessId"] -ne $processIdFilter)) {
+                    return $false
+                }
+            }
+
+        } catch {
+            Write-Warning "Could not parse event for filtering"
+            return $false
         }
 
         return $true
