@@ -254,7 +254,7 @@ function Run-LogRipper {
             $val = $field.Value
             $highlight = $false
 
-            if ($val -match "shutdown|\.exe|MXNfYV|base64|powershell|cmd\.exe|wscript|reg add|bypass|Invoke-|curl|wget|whoami") {
+            if ($val -match "shutdown|\.exe|MXNfYV|base64|powershell|cmd\.exe|wscript|reg add|bypass|Invoke-|curl|wget|whoami|Get-ComputerInfo") {
                 $highlight = $true
                 $suspiciousScore++
             }
