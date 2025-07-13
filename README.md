@@ -139,7 +139,7 @@ We can also investigate Event ID 11 and 13, which correspond to File Create and 
 
 <img width="1141" height="474" alt="image" src="https://github.com/user-attachments/assets/f5cc8e14-c9ab-40c3-ae97-d1335eff6099" />
 
-If we want to investigate Event IDs 3 and 22 (Network Connection and DNS Query), the script will show you everything you need to know. [Sysmon Event ID 3 - Network connection detected](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?source=Sysmon&eventID=3)
+If we want to investigate Event IDs 3 and 22 (Network Connection and DNS Query), the script will show you everything you need to know. [Sysmon Event ID 3 - Network connection detected](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?source=Sysmon&eventID=3) and [Sysmon Event ID 22 - DNSEvent](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90022)
 
 <img width="1124" height="649" alt="image" src="https://github.com/user-attachments/assets/7b1fcc2c-f00e-4f7e-9d01-ad9d03c2a0e3" />
 
