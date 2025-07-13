@@ -24,6 +24,12 @@ function Prompt-Choice($message, $options) {
     }
 }
 
+function Is-PrivateIP($ip) {
+    return $ip -match '^10\.' -or
+           $ip -match '^172\.(1[6-9]|2[0-9]|3[0-1])\.' -or
+           $ip -match '^192\.168\.'
+}
+
 function Run-CorrelationSummary {
     param ($LogPath)
 
@@ -102,10 +108,14 @@ function Run-LogRipper {
         return
     }
 
-    $idInput = Read-Host "Enter Event ID(s) to analyze (comma separated, e.g., 1074,4624)"
-    $eventIDsToWatch = $idInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
+    $idInput = Read-Host "Enter Event ID(s) to analyze (comma separated, e.g., 1074,4624 or all(allEventID))"
+    $eventIDsToWatch = @()
+    if ($idInput.Trim().ToLower() -eq "all") {
+        $eventIDsToWatch = @() # Empty array means all events
+    } else {
+        $eventIDsToWatch = $idInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
+    }
 
-    # If analyzing user management events, ask if want auto summary
     $wantsAutoSummary = $false
     if ($eventIDsToWatch -contains 4720 -and $eventIDsToWatch -contains 4732) {
         $wantsAutoSummary = Prompt-YesNo "Want to run a User Creation + Group Membership Summary automatically"
@@ -116,12 +126,13 @@ function Run-LogRipper {
         return
     }
 
-    # Normal filtering for other event IDs, or if user says no to summary
     $authEventIDs = @(4624, 4625)
     $advancedFilters = @{}
 
-    if ($eventIDsToWatch | Where-Object { $authEventIDs -contains $_ }) {
-        Write-Host "Authentication Event ID(s) Detected." -ForegroundColor Cyan
+    # Ask for filters only if not showing all or if auth events are requested
+    if ($eventIDsToWatch.Count -eq 0 -or ($eventIDsToWatch | Where-Object { $authEventIDs -contains $_ })) {
+        Write-Host "Authentication Event ID(s) Detected or all events selected." -ForegroundColor Cyan
+
         if (Prompt-YesNo "Want to filter more") {
             if (Prompt-YesNo "Want to filter for LogonType") {
                 $logonTypesInput = Read-Host "LogonType Number(s) (comma-separated, e.g., 3,10)"
@@ -135,6 +146,13 @@ function Run-LogRipper {
                 $ipFilter = Read-Host "IpAddress (e.g., 10.10.53.248)"
                 $advancedFilters.IpAddress = $ipFilter.Trim()
             }
+            if (Prompt-YesNo "Want to filter for external IPs (use 'IpAddress' field)") {
+                $advancedFilters.ExternalOnly = $true
+            }
+            if (Prompt-YesNo "Want to filter for WorkstationName") {
+                $workstationFilter = Read-Host "WorkstationName (e.g., WS-01)"
+                $advancedFilters.WorkstationName = $workstationFilter.Trim()
+            }
         }
     }
 
@@ -146,10 +164,14 @@ function Run-LogRipper {
     }
 
     $filteredEvents = $events | Where-Object {
-        $eventMatch = $eventIDsToWatch -contains $_.Id
+        $eventMatch = $true
+        if ($eventIDsToWatch.Count -gt 0) {
+            $eventMatch = $eventIDsToWatch -contains $_.Id
+        }
+
         if (-not $eventMatch) { return $false }
 
-        if ($authEventIDs -contains $_.Id -and $advancedFilters.Count -gt 0) {
+        if (($authEventIDs -contains $_.Id) -and ($advancedFilters.Count -gt 0)) {
             try {
                 [xml]$xml = $_.ToXml()
                 $nsMgr = New-Object System.Xml.XmlNamespaceManager($xml.NameTable)
@@ -172,6 +194,14 @@ function Run-LogRipper {
                 }
 
                 if ($advancedFilters.IpAddress -and ($dataHash["IpAddress"] -ne $advancedFilters.IpAddress)) {
+                    return $false
+                }
+
+                if ($advancedFilters.ExternalOnly -and (Is-PrivateIP $dataHash["IpAddress"])) {
+                    return $false
+                }
+
+                if ($advancedFilters.WorkstationName -and ($dataHash["WorkstationName"] -ne $advancedFilters.WorkstationName)) {
                     return $false
                 }
 
