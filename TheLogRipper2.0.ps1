@@ -120,10 +120,10 @@ function Run-LogRipper {
     $imageFilter = $null
     $processIdFilter = $null
     if ($eventIDsToWatch -contains 22) {
-        if (Prompt-YesNo "Want to filter for Image path (yes/no)?") {
+        if (Prompt-YesNo "Want to filter for Image path") {
             $imageFilter = Read-Host "Enter Image Filter (full path or partial)"
         }
-        if (Prompt-YesNo "Want to filter for ProcessID (yes/no)?") {
+        if (Prompt-YesNo "Want to filter for ProcessID") {
             $processIdFilter = Read-Host "Enter ProcessID (number)"
         }
     }
