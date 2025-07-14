@@ -178,6 +178,22 @@ If you choose yes, it will:
 
 <img width="1892" height="777" alt="image" src="https://github.com/user-attachments/assets/426da6ee-cac3-40b9-938d-003323be050e" />
 
+## TheLogRipper2.0.ps1 Last Update: DNSEvent (Event IDs 22)(07/12/2025) 
 
+When the user inputs Event ID 22, the script now asks if they want to apply extra filters specifically for Image path and ProcessID. If the user says yes, it prompts for the filter values to narrow down the event log results accordingly. If not, it continues normally without those filters.
+
+In this scenerario we are going to use EventId 1 [Sysmon Event ID 1 - Process creation](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90001) and EventId 22 [Sysmon Event ID 22 - DNSEvent](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=90022), 
+
+The process creation event provides extended information about a newly created process.
+<img width="1521" height="748" alt="image" src="https://github.com/user-attachments/assets/b6db1d25-2864-43ff-bd52-d4184d1d0d82" />
+
+Why Event ID 22 Matters in Malware Analysis:
+Event ID 22 (DNS query from Sysmon) is valuable for detecting malware that uses DNS to reach out to attacker infrastructure like command and control (C2) servers. Malware often blends into normal traffic, but each DNS query is tied to the process that made it.
+
+By analyzing this event, we can correlate suspicious domain lookups with specific processes either by Process ID (e.g., 5484) or Image path (e.g., C:\Users\Administrator\Pictures\best-cat.jpg.exe). This helps us isolate which binary initiated the connection, even in a noisy log environment.
+
+<img width="1889" height="785" alt="image" src="https://github.com/user-attachments/assets/76a8f92b-4446-42f2-a7f1-abdb0b7fd93a" />
+
+<img width="1891" height="774" alt="image" src="https://github.com/user-attachments/assets/a63ce398-eea3-4672-9f5f-ff2306542ec7" />
 
 
