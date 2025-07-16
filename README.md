@@ -196,4 +196,28 @@ By analyzing this event, we can correlate suspicious domain lookups with specifi
 
 <img width="1891" height="774" alt="image" src="https://github.com/user-attachments/assets/a63ce398-eea3-4672-9f5f-ff2306542ec7" />
 
+## TheLogRipper2.0.ps1 Last Update: extra filters (Event ID 1)(07/16/2025)
+
+When the user inputs Event ID 1, the script now asks if they want to apply extra filters specifically for .
+
+<img width="1043" height="171" alt="image" src="https://github.com/user-attachments/assets/71f6ccb2-67c4-4add-a00f-591f2faa9013" />
+
+Example: 
+
+Image:
+
+<img width="1871" height="767" alt="image" src="https://github.com/user-attachments/assets/808f5dad-b621-4e80-aae2-a9a7f6b521d7" />
+
+<img width="1648" height="303" alt="image" src="https://github.com/user-attachments/assets/b12ac650-65db-4048-8e57-0e9585cd3fdb" />
+
+Parent Process Id:
+
+<img width="1889" height="782" alt="image" src="https://github.com/user-attachments/assets/cdfda0a0-33d5-4ecf-ae10-19bad9118485" />
+
+Parent Image:
+
+<img width="1883" height="768" alt="image" src="https://github.com/user-attachments/assets/10889255-25b6-4c28-9c3c-641d4b4a32d7" />
+
+
+
 
