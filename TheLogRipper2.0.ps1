@@ -116,7 +116,7 @@ function Run-LogRipper {
         $eventIDsToWatch = $idInput -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
     }
 
-    # --- NEW for Event ID 22 filtering ---
+    # --- Filters for Event ID 22 ---
     $imageFilter = $null
     $processIdFilter = $null
     if ($eventIDsToWatch -contains 22) {
@@ -125,6 +125,39 @@ function Run-LogRipper {
         }
         if (Prompt-YesNo "Want to filter for ProcessID") {
             $processIdFilter = Read-Host "Enter ProcessID (number)"
+        }
+    }
+
+    # --- NEW Filters for Event ID 1 ---
+    $imageFilter_EID1 = $null
+    $cmdLineFilter_EID1 = $null
+    $userFilter_EID1 = $null
+    $processIdFilter_EID1 = $null
+    $parentProcessIdFilter_EID1 = $null
+    $parentImageFilter_EID1 = $null
+    $parentCommandLineFilter_EID1 = $null
+
+    if ($eventIDsToWatch -contains 1) {
+        if (Prompt-YesNo "Want to filter Event ID 1 by Image path?") {
+            $imageFilter_EID1 = Read-Host "Enter partial or full Image path"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by CommandLine substring?") {
+            $cmdLineFilter_EID1 = Read-Host "Enter CommandLine substring"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by User?") {
+            $userFilter_EID1 = Read-Host "Enter User name (exact or partial match)"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by ProcessId?") {
+            $processIdFilter_EID1 = Read-Host "Enter ProcessId (number)"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by ParentProcessId?") {
+            $parentProcessIdFilter_EID1 = Read-Host "Enter ParentProcessId (number)"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by ParentImage?") {
+            $parentImageFilter_EID1 = Read-Host "Enter partial or full ParentImage path"
+        }
+        if (Prompt-YesNo "Want to filter Event ID 1 by ParentCommandLine substring?") {
+            $parentCommandLineFilter_EID1 = Read-Host "Enter ParentCommandLine substring"
         }
     }
 
@@ -218,12 +251,37 @@ function Run-LogRipper {
                 }
             }
 
-            # --- NEW for Event ID 22 filtering ---
+            # --- Filters for Event ID 22 ---
             if ($_.Id -eq 22) {
                 if ($imageFilter -and ($dataHash["Image"] -notlike "*$imageFilter*")) {
                     return $false
                 }
                 if ($processIdFilter -and ($dataHash["ProcessId"] -ne $processIdFilter)) {
+                    return $false
+                }
+            }
+
+            # --- Filters for Event ID 1 ---
+            if ($_.Id -eq 1) {
+                if ($imageFilter_EID1 -and ($dataHash["Image"] -notlike "*$imageFilter_EID1*")) {
+                    return $false
+                }
+                if ($cmdLineFilter_EID1 -and ($dataHash["CommandLine"] -notlike "*$cmdLineFilter_EID1*")) {
+                    return $false
+                }
+                if ($userFilter_EID1 -and ($dataHash["User"] -notlike "*$userFilter_EID1*")) {
+                    return $false
+                }
+                if ($processIdFilter_EID1 -and ($dataHash["ProcessId"] -ne $processIdFilter_EID1)) {
+                    return $false
+                }
+                if ($parentProcessIdFilter_EID1 -and ($dataHash["ParentProcessId"] -ne $parentProcessIdFilter_EID1)) {
+                    return $false
+                }
+                if ($parentImageFilter_EID1 -and ($dataHash["ParentImage"] -notlike "*$parentImageFilter_EID1*")) {
+                    return $false
+                }
+                if ($parentCommandLineFilter_EID1 -and ($dataHash["ParentCommandLine"] -notlike "*$parentCommandLineFilter_EID1*")) {
                     return $false
                 }
             }
