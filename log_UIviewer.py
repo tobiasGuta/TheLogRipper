@@ -9,13 +9,15 @@ import os
 from collections import defaultdict
 
 st.set_page_config(layout="wide")
-st.title("🕵️ EVTX Threat Hunting UI")
+st.title("\U0001f575️ EVTX Threat Hunting UI")
 
 # --- Session State Init ---
 if "event_store" not in st.session_state:
     st.session_state.event_store = []
 if "node_colors" not in st.session_state:
     st.session_state.node_colors = {}
+if "excluded_uuids" not in st.session_state:
+    st.session_state.excluded_uuids = set()
 
 # --- Tag Colors ---
 TAG_COLORS = {
@@ -29,7 +31,7 @@ TAG_COLORS = {
 }
 
 # --- File Upload ---
-st.sidebar.header("📂 Upload Logs")
+st.sidebar.header("\U0001f4c2 Upload Logs")
 uploaded_files = st.sidebar.file_uploader(
     "Upload one or more EVTX-converted JSON files",
     type=["json"],
@@ -64,12 +66,13 @@ if uploaded_files:
                 st.session_state.event_store.append(evt)
                 st.session_state.node_colors[evt["uuid"]] = TAG_COLORS[""]
 
-# --- Event Table ---
-df = pd.DataFrame(st.session_state.event_store)
+# --- Filter out hidden events ---
+visible_events = [e for e in st.session_state.event_store if e["uuid"] not in st.session_state.excluded_uuids]
+df = pd.DataFrame(visible_events)
 
 if not df.empty:
-    with st.expander("🔍 Event Table (click to expand)", expanded=True):
-        visible_columns = sorted(set().union(*[e.keys() for e in st.session_state.event_store]))
+    with st.expander("\U0001f50d Event Table (click to expand)", expanded=True):
+        visible_columns = sorted(set().union(*[e.keys() for e in visible_events]))
         df_full = df.reindex(columns=visible_columns)
         df_full["UtcTime"] = pd.to_datetime(df_full["UtcTime"], errors="coerce")
         df_full = df_full.sort_values("UtcTime")
@@ -93,21 +96,36 @@ if not df.empty:
             st.session_state.node_colors[selected_uuid] = TAG_COLORS.get(new_tag, TAG_COLORS[""])
             break
 
+    is_excluded = selected_uuid in st.session_state.excluded_uuids
+    if st.sidebar.button("🚫 Hide this log from view" if not is_excluded else "♻️ Unhide this log"):
+        if is_excluded:
+            st.session_state.excluded_uuids.remove(selected_uuid)
+        else:
+            st.session_state.excluded_uuids.add(selected_uuid)
+
+    if st.sidebar.checkbox("Show hidden logs"):
+        hidden_events = [e for e in st.session_state.event_store if e["uuid"] in st.session_state.excluded_uuids]
+        st.sidebar.write(f"Total hidden: {len(hidden_events)}")
+        for e in hidden_events:
+            st.sidebar.markdown(f"- `{e['uuid']}` | **{e.get('Image', 'N/A')}**")
+            if st.sidebar.button(f"Unhide {e['uuid']}", key=e['uuid']):
+                st.session_state.excluded_uuids.remove(e['uuid'])
+
     # --- Graph Visualization ---
-    st.subheader("🌐 Process Relationship Graph")
+    st.subheader("\U0001f310 Process Relationship Graph")
     G = nx.DiGraph()
 
-    for evt in st.session_state.event_store:
+    for evt in visible_events:
         node_color = st.session_state.node_colors.get(evt["uuid"], TAG_COLORS[""])
         label = evt.get("Image", "Unknown")
         node_label = f"{label}\n{evt['tag'] or 'Uncategorized'}"
         G.add_node(evt["uuid"], label=node_label, color=node_color)
 
-    for evt in st.session_state.event_store:
+    for evt in visible_events:
         parent_guid = evt.get("ParentProcessGuid")
         child_guid = evt.get("ProcessGuid")
         if parent_guid and child_guid:
-            parent = next((e for e in st.session_state.event_store if e.get("ProcessGuid") == parent_guid), None)
+            parent = next((e for e in visible_events if e.get("ProcessGuid") == parent_guid), None)
             if parent:
                 G.add_edge(parent["uuid"], evt["uuid"])
 
@@ -120,27 +138,27 @@ if not df.empty:
         os.unlink(tmp_file.name)
 
     # --- Execution Flow Timeline (Tree View) ---
-    st.subheader("🧬 Execution Flow Timeline (Tree View)")
+    st.subheader("\U0001f9ec Execution Flow Timeline (Tree View)")
 
     show_untagged = st.sidebar.checkbox("Show untagged events", value=True)
 
-    guid_to_event = {e.get("ProcessGuid"): e for e in st.session_state.event_store}
+    guid_to_event = {e.get("ProcessGuid"): e for e in visible_events}
     child_map = defaultdict(list)
-    for e in st.session_state.event_store:
+    for e in visible_events:
         parent_guid = e.get("ParentProcessGuid")
         if parent_guid:
             child_map[parent_guid].append(e)
 
     def get_tag_emoji(tag):
         return {
-            "Initial Access": "🚪",
+            "Initial Access": "\U0001f6aa",
             "Execution": "💥",
-            "Persistence": "🛡️",
-            "C2": "📡",
-            "Exfiltration": "📤",
-            "Cleanup": "🧹",
-            "": "🧩",  # clearer fallback emoji
-        }.get(tag, "🧩")
+            "Persistence": "\U0001f6e1️",
+            "C2": "\U0001f4e1",
+            "Exfiltration": "\U0001f4e4",
+            "Cleanup": "\U0001f9f9",
+            "": "\U0001f9e9",
+        }.get(tag, "\U0001f9e9")
 
     def get_tag_color(tag):
         return TAG_COLORS.get(tag, "#bdc3c7")
@@ -170,26 +188,21 @@ if not df.empty:
         time = node.get("UtcTime", "")
         cmdline = node.get("CommandLine", "").strip()
 
-        # 1. Prefix + emoji
         st.markdown(f"{prefix}{emoji}")
-
-        # 2. Image path (indented)
         indent = "&nbsp;&nbsp;&nbsp;" * (depth + 1)
         st.markdown(f"{indent}<code>{img}</code>", unsafe_allow_html=True)
 
-        # 3. Tag + timestamp
         if tag:
             st.markdown(
-                f"{indent}<span style='color:{color}; font-style: italic; font-weight: 600;'>`{tag}`  🕒 *{time}*</span>",
+                f"{indent}<span style='color:{color}; font-style: italic; font-weight: 600;'>`{tag}`  \U0001f552 *{time}*</span>",
                 unsafe_allow_html=True,
             )
         else:
             st.markdown(
-                f"{indent}<span style='color:gray; font-style: italic;'>🧩 [Uncategorized] 🕒 *{time}*</span>",
+                f"{indent}<span style='color:gray; font-style: italic;'>\U0001f9e9 [Uncategorized] \U0001f552 *{time}*</span>",
                 unsafe_allow_html=True,
             )
 
-        # 4. CommandLine
         if cmdline:
             with st.expander("Show CommandLine", expanded=False):
                 st.code(cmdline, language="bash")
@@ -198,7 +211,7 @@ if not df.empty:
             has_siblings_below = idx < len(children) - 1
             display_tree(child, child_map, depth + 1, sibling_stack + [has_siblings_below])
 
-    roots = [e for e in st.session_state.event_store if e.get("ParentProcessGuid") not in guid_to_event]
+    roots = [e for e in visible_events if e.get("ParentProcessGuid") not in guid_to_event]
     roots_sorted = sorted(roots, key=lambda e: e.get("UtcTime", ""))
 
     for root in roots_sorted:
@@ -206,7 +219,7 @@ if not df.empty:
 
     # --- Export Annotated Logs ---
     st.sidebar.markdown("---")
-    if st.sidebar.button("📤 Export Annotated Logs"):
+    if st.sidebar.button("\U0001f4e4 Export Annotated Logs"):
         out_df = pd.DataFrame(st.session_state.event_store)
         st.sidebar.download_button(
             "Download JSON",
@@ -218,6 +231,5 @@ if not df.empty:
             data=out_df.to_csv(index=False),
             file_name="annotated_logs.csv",
         )
-
 else:
     st.info("Upload EVTX JSON files to start hunting.")
