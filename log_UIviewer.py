@@ -27,6 +27,8 @@ TAG_COLORS = {
     "C2": "#3498db",
     "Exfiltration": "#2ecc71",
     "Cleanup": "#95a5a6",
+    "Enumeration": "#2980b9",
+    "Discovery": "#f1c40f",
     "": "#bdc3c7"  # Uncategorized
 }
 
@@ -72,6 +74,26 @@ MITRE_TECHNIQUES = {
     "TA0010 Exfiltration": {
         "name": "Exfiltration",
         "url": "https://attack.mitre.org/tactics/TA0010/"
+    },
+    "T1033 System Owner/User Discovery": {
+        "name": "System Owner/User Discovery",
+        "url": "https://attack.mitre.org/techniques/T1033/"
+    },
+    "T1082 System Information Discovery": {
+        "name": "System Information Discovery",
+        "url": "https://attack.mitre.org/techniques/T1082/"
+    },
+    "T1047 Windows Management Instrumentation": {
+        "name": "Windows Management Instrumentation",
+        "url": "https://attack.mitre.org/techniques/T1047/"
+    },
+    "T1057 Process Discovery": {
+        "name": "Process Discovery",
+        "url": "https://attack.mitre.org/techniques/T1057/"
+    },
+    "T1059 Command and Scripting Interpreter: PowerShell": {
+        "name": "Command and Scripting Interpreter: PowerShell",
+        "url": "https://attack.mitre.org/techniques/T1059/001/"
     }
 }
 # ================================================
@@ -132,7 +154,7 @@ if not df.empty:
 
     st.sidebar.write(f"**Image:** {selected_event.get('Image', 'N/A')}")
     new_tag = st.sidebar.selectbox(
-        "Tag", ["", "Initial Access", "Execution", "Persistence", "C2", "Exfiltration", "Cleanup"]
+        "Tag", ["", "Initial Access", "Execution", "Persistence", "C2", "Exfiltration", "Cleanup", "Enumeration", "Discovery"]
     )
     new_note = st.sidebar.text_area("Notes", value=selected_event.get("notes", ""))
 
@@ -220,6 +242,8 @@ if not df.empty:
             "Persistence": "\U0001f6e1️",
             "C2": "\U0001f4e1",
             "Exfiltration": "\U0001f4e4",
+            "Enumeration": "🔍",
+            "Discovery": "💡",
             "Cleanup": "\U0001f9f9",
             "": "\U0001f9e9",
         }.get(tag, "\U0001f9e9")
