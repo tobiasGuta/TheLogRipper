@@ -227,7 +227,9 @@ So I built a web-based threat hunting UI using Streamlit!
 
 Why? Because across dozens of logs, you need speed, clarity, and context.
 
-https://github.com/user-attachments/assets/b3334b4e-a95a-400e-98f4-200d6a2cbabe
+https://github.com/user-attachments/assets/7d28dae9-0966-4999-b632-bc6c74a6bbca
+
+
 
 
 
