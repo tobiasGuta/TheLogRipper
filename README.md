@@ -219,5 +219,15 @@ Parent Image:
 <img width="1883" height="768" alt="image" src="https://github.com/user-attachments/assets/10889255-25b6-4c28-9c3c-641d4b4a32d7" />
 
 
+## log_UIviewer.py
+
+After ripping apart logs with my custom-built tool https://github.com/tobiasGuta/TheLogRipper built to recompile and enrich EVTX logs I realized I needed something more visual to hunt threats efficiently.
+
+So I built a web-based threat hunting UI using Streamlit!
+
+Why? Because across dozens of logs, you need speed, clarity, and context.
+
+https://github.com/user-attachments/assets/b3334b4e-a95a-400e-98f4-200d6a2cbabe
+
 
 
