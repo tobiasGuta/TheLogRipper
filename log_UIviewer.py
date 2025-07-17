@@ -187,10 +187,11 @@ if not df.empty:
         img = node.get("Image", "Unknown")
         time = node.get("UtcTime", "")
         cmdline = node.get("CommandLine", "").strip()
+        uuid_val = node.get("uuid", "")
 
         st.markdown(f"{prefix}{emoji}")
         indent = "&nbsp;&nbsp;&nbsp;" * (depth + 1)
-        st.markdown(f"{indent}<code>{img}</code>", unsafe_allow_html=True)
+        st.markdown(f"{indent}<code>{img}</code> <span style='color:#888; font-family: monospace;'>[{uuid_val}]</span>", unsafe_allow_html=True)
 
         if tag:
             st.markdown(
