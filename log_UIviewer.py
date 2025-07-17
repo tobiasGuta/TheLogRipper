@@ -30,6 +30,52 @@ TAG_COLORS = {
     "": "#bdc3c7"  # Uncategorized
 }
 
+# ====== MITRE ATT&CK HARD-CODED DICTIONARY ======
+MITRE_TECHNIQUES = {
+    "": {"name": "", "url": ""},
+    "T1059": {
+        "name": "Command and Scripting Interpreter",
+        "url": "https://attack.mitre.org/techniques/T1059/"
+    },
+    "T1086": {
+        "name": "PowerShell",
+        "url": "https://attack.mitre.org/techniques/T1086/"
+    },
+    "T1569": {
+        "name": "System Services",
+        "url": "https://attack.mitre.org/techniques/T1569/"
+    },
+    "T1027": {
+        "name": "Obfuscated Files or Information",
+        "url": "https://attack.mitre.org/techniques/T1027/"
+    },
+    "T1204": {
+        "name": "User Execution",
+        "url": "https://attack.mitre.org/techniques/T1204/"
+    },
+    "T1105": {
+        "name": "Ingress Tool Transfer",
+        "url": "https://attack.mitre.org/techniques/T1105/"
+    },
+    "T1003": {
+        "name": "OS Credential Dumping",
+        "url": "https://attack.mitre.org/techniques/T1003/"
+    },
+    "T1218": {
+        "name": "Signed Binary Proxy Execution",
+        "url": "https://attack.mitre.org/techniques/T1218/"
+    },
+    "T1047": {
+        "name": "Windows Management Instrumentation",
+        "url": "https://attack.mitre.org/techniques/T1047/"
+    },
+    "TA0010 Exfiltration": {
+        "name": "Exfiltration",
+        "url": "https://attack.mitre.org/tactics/TA0010/"
+    }
+}
+# ================================================
+
 # --- File Upload ---
 st.sidebar.header("\U0001f4c2 Upload Logs")
 uploaded_files = st.sidebar.file_uploader(
@@ -52,6 +98,7 @@ def parse_json(file):
         flat["uuid"] = str(uuid.uuid4())
         flat["tag"] = ""
         flat["notes"] = ""
+        flat["mitre"] = ""  # <-- Initialize mitre field here
         parsed_events.append(flat)
     return parsed_events
 
@@ -89,10 +136,23 @@ if not df.empty:
     )
     new_note = st.sidebar.text_area("Notes", value=selected_event.get("notes", ""))
 
+    # ======= MITRE Technique Selection Dropdown =======
+    mitre_ids = sorted(MITRE_TECHNIQUES.keys())
+    selected_mitre = st.sidebar.selectbox("MITRE Technique ID", mitre_ids, index=mitre_ids.index(selected_event.get("mitre", "") if selected_event.get("mitre", "") in mitre_ids else ""))
+    if selected_mitre:
+        mitre_info = MITRE_TECHNIQUES.get(selected_mitre, {"name": "", "url": ""})
+        if mitre_info["name"]:
+            st.sidebar.markdown(
+                f"[{mitre_info['name']}]({mitre_info['url']})",
+                unsafe_allow_html=True
+            )
+    # ===================================================
+
     for i, evt in enumerate(st.session_state.event_store):
         if evt["uuid"] == selected_uuid:
             st.session_state.event_store[i]["tag"] = new_tag
             st.session_state.event_store[i]["notes"] = new_note
+            st.session_state.event_store[i]["mitre"] = selected_mitre  # <-- Store MITRE ID here
             st.session_state.node_colors[selected_uuid] = TAG_COLORS.get(new_tag, TAG_COLORS[""])
             break
 
@@ -118,7 +178,11 @@ if not df.empty:
     for evt in visible_events:
         node_color = st.session_state.node_colors.get(evt["uuid"], TAG_COLORS[""])
         label = evt.get("Image", "Unknown")
+        mitre_id = evt.get("mitre", "")
+        mitre_info = MITRE_TECHNIQUES.get(mitre_id, {})
         node_label = f"{label}\n{evt['tag'] or 'Uncategorized'}"
+        if mitre_id:
+            node_label += f"\n{mitre_id}: {mitre_info.get('name', '')}"
         G.add_node(evt["uuid"], label=node_label, color=node_color)
 
     for evt in visible_events:
@@ -203,6 +267,16 @@ if not df.empty:
                 f"{indent}<span style='color:gray; font-style: italic;'>\U0001f9e9 [Uncategorized] \U0001f552 *{time}*</span>",
                 unsafe_allow_html=True,
             )
+
+        # ======= MITRE Display in Tree View =======
+        mitre_id = node.get("mitre", "")
+        if mitre_id in MITRE_TECHNIQUES and mitre_id != "":
+            mitre_info = MITRE_TECHNIQUES[mitre_id]
+            st.markdown(
+                f"{indent}🧩 <a href='{mitre_info['url']}' target='_blank'><code>{mitre_id}</code> - {mitre_info['name']}</a>",
+                unsafe_allow_html=True
+            )
+        # ==========================================
 
         if cmdline:
             with st.expander("Show CommandLine", expanded=False):
