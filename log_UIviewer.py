@@ -213,7 +213,7 @@ if not df.empty:
 
     # --- All keys & default fields for selection ---
     all_keys = sorted(set().union(*[e.keys() for e in visible_events])) if visible_events else []
-    default_fields = ["CommandLine", "User", "IntegrityLevel", "ProcessId", "EventID", "ParentImage", "ParentProcessId", "ParentCommandLine"]
+    default_fields = ["EventID", "User", "IntegrityLevel", "CommandLine", "ProcessId", "ParentProcessId", "ParentImage", "ParentCommandLine"]
 
     # --- Move multiselect widgets outside recursion: per-event in sidebar ---
     st.sidebar.header("Select Fields Per Event")
