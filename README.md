@@ -229,6 +229,12 @@ Why? Because across dozens of logs, you need speed, clarity, and context.
 
 https://github.com/user-attachments/assets/7d28dae9-0966-4999-b632-bc6c74a6bbca
 
+# log_UIviewer_plusYARA.py
+
+Current Limitation:
+Right now, when you load a new log in log_UIviewer_plusYARA.py, the YARA rules applied to the previous log don’t reset properly. This means tags, MITRE IDs, and YARA detection results from the old log bleed over and apply incorrectly to the new logs, even if they don’t actually match.
+
+https://github.com/user-attachments/assets/d2bfa527-b580-406d-bc57-cbfa5cc36d4a
 
 
 
