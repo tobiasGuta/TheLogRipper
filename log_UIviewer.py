@@ -52,6 +52,8 @@ MITRE_TECHNIQUES = {
     "T1047 Windows Management Instrumentation": {"name": "Windows Management Instrumentation", "url": "https://attack.mitre.org/techniques/T1047/"},
     "T1057 Process Discovery": {"name": "Process Discovery", "url": "https://attack.mitre.org/techniques/T1057/"},
     "T1074 Data Staged": {"name": "Data Staged", "url": "https://attack.mitre.org/techniques/T1074/"},
+    "T1074.001 Data Staged: Local Data Staging": {"name": "Data Staged: Local Data Staging", "url": "https://attack.mitre.org/techniques/T1074/001/"},
+    "T1115 Clipboard Data": {"name": "Clipboard Data", "url": "https://attack.mitre.org/techniques/T1115/"},
     "T1059 Command and Scripting Interpreter: PowerShell": {
         "name": "Command and Scripting Interpreter: PowerShell",
         "url": "https://attack.mitre.org/techniques/T1059/001/",
@@ -211,7 +213,7 @@ if not df.empty:
 
     # --- All keys & default fields for selection ---
     all_keys = sorted(set().union(*[e.keys() for e in visible_events])) if visible_events else []
-    default_fields = ["CommandLine", "User", "IntegrityLevel", "ProcessId", "EventID"]
+    default_fields = ["CommandLine", "User", "IntegrityLevel", "ProcessId", "EventID", "ParentImage", "ParentProcessId", "ParentCommandLine"]
 
     # --- Move multiselect widgets outside recursion: per-event in sidebar ---
     st.sidebar.header("Select Fields Per Event")
