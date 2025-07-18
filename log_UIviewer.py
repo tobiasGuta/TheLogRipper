@@ -37,28 +37,76 @@ TAG_COLORS = {
 # ====== MITRE ATT&CK HARD-CODED DICTIONARY ======
 MITRE_TECHNIQUES = {
     "": {"name": "", "url": ""},
-    "T1059": {"name": "Command and Scripting Interpreter", "url": "https://attack.mitre.org/techniques/T1059/"},
-    "T1086": {"name": "PowerShell", "url": "https://attack.mitre.org/techniques/T1086/"},
-    "T1569": {"name": "System Services", "url": "https://attack.mitre.org/techniques/T1569/"},
-    "T1027": {"name": "Obfuscated Files or Information", "url": "https://attack.mitre.org/techniques/T1027/"},
-    "T1204": {"name": "User Execution", "url": "https://attack.mitre.org/techniques/T1204/"},
-    "T1105": {"name": "Ingress Tool Transfer", "url": "https://attack.mitre.org/techniques/T1105/"},
-    "T1003": {"name": "OS Credential Dumping", "url": "https://attack.mitre.org/techniques/T1003/"},
-    "T1218": {"name": "Signed Binary Proxy Execution", "url": "https://attack.mitre.org/techniques/T1218/"},
-    "T1047": {"name": "Windows Management Instrumentation", "url": "https://attack.mitre.org/techniques/T1047/"},
-    "TA0010 Exfiltration": {"name": "Exfiltration", "url": "https://attack.mitre.org/tactics/TA0010/"},
-    "T1033 System Owner/User Discovery": {"name": "System Owner/User Discovery", "url": "https://attack.mitre.org/techniques/T1033/"},
-    "T1082 System Information Discovery": {"name": "System Information Discovery", "url": "https://attack.mitre.org/techniques/T1082/"},
-    "T1047 Windows Management Instrumentation": {"name": "Windows Management Instrumentation", "url": "https://attack.mitre.org/techniques/T1047/"},
-    "T1057 Process Discovery": {"name": "Process Discovery", "url": "https://attack.mitre.org/techniques/T1057/"},
-    "T1074 Data Staged": {"name": "Data Staged", "url": "https://attack.mitre.org/techniques/T1074/"},
-    "T1074.001 Data Staged: Local Data Staging": {"name": "Data Staged: Local Data Staging", "url": "https://attack.mitre.org/techniques/T1074/001/"},
-    "T1115 Clipboard Data": {"name": "Clipboard Data", "url": "https://attack.mitre.org/techniques/T1115/"},
-    "T1059 Command and Scripting Interpreter: PowerShell": {
+    "T1059 Command and Scripting Interpreter": {
+        "name": "Command and Scripting Interpreter",
+        "url": "https://attack.mitre.org/techniques/T1059/",
+    },
+    "T1086 PowerShell": {
+        "name": "PowerShell",
+        "url": "https://attack.mitre.org/techniques/T1086/",
+    },
+    "T1569 System Services": {
+        "name": "System Services",
+        "url": "https://attack.mitre.org/techniques/T1569/",
+    },
+    "T1027 Obfuscated Files or Information": {
+        "name": "Obfuscated Files or Information",
+        "url": "https://attack.mitre.org/techniques/T1027/",
+    },
+    "T1204 User Execution": {
+        "name": "User Execution",
+        "url": "https://attack.mitre.org/techniques/T1204/",
+    },
+    "T1105 Ingress Tool Transfer": {
+        "name": "Ingress Tool Transfer",
+        "url": "https://attack.mitre.org/techniques/T1105/",
+    },
+    "T1003 OS Credential Dumping": {
+        "name": "OS Credential Dumping",
+        "url": "https://attack.mitre.org/techniques/T1003/",
+    },
+    "T1218 Signed Binary Proxy Execution": {
+        "name": "Signed Binary Proxy Execution",
+        "url": "https://attack.mitre.org/techniques/T1218/",
+    },
+    "T1047 Windows Management Instrumentation": {
+        "name": "Windows Management Instrumentation",
+        "url": "https://attack.mitre.org/techniques/T1047/",
+    },
+    "TA0010 Exfiltration": {
+        "name": "Exfiltration",
+        "url": "https://attack.mitre.org/tactics/TA0010/",
+    },
+    "T1033 System Owner/User Discovery": {
+        "name": "System Owner/User Discovery",
+        "url": "https://attack.mitre.org/techniques/T1033/",
+    },
+    "T1082 System Information Discovery": {
+        "name": "System Information Discovery",
+        "url": "https://attack.mitre.org/techniques/T1082/",
+    },
+    "T1057 Process Discovery": {
+        "name": "Process Discovery",
+        "url": "https://attack.mitre.org/techniques/T1057/",
+    },
+    "T1074 Data Staged": {
+        "name": "Data Staged",
+        "url": "https://attack.mitre.org/techniques/T1074/",
+    },
+    "T1074.001 Data Staged: Local Data Staging": {
+        "name": "Data Staged: Local Data Staging",
+        "url": "https://attack.mitre.org/techniques/T1074/001/",
+    },
+    "T1115 Clipboard Data": {
+        "name": "Clipboard Data",
+        "url": "https://attack.mitre.org/techniques/T1115/",
+    },
+    "T1059.001 Command and Scripting Interpreter: PowerShell": {
         "name": "Command and Scripting Interpreter: PowerShell",
         "url": "https://attack.mitre.org/techniques/T1059/001/",
     },
 }
+
 # ================================================
 
 # --- File Upload ---
@@ -213,7 +261,7 @@ if not df.empty:
 
     # --- All keys & default fields for selection ---
     all_keys = sorted(set().union(*[e.keys() for e in visible_events])) if visible_events else []
-    default_fields = ["EventID", "User", "IntegrityLevel", "CommandLine", "ProcessId", "ParentProcessId", "ParentImage", "ParentCommandLine"]
+    default_fields = ["EventID", "Computer", "User", "IntegrityLevel", "Image", "CommandLine", "ProcessId", "ParentProcessId", "ParentImage", "ParentCommandLine", "QueryName", "QueryResults"]
 
     # --- Move multiselect widgets outside recursion: per-event in sidebar ---
     st.sidebar.header("Select Fields Per Event")
