@@ -18,6 +18,8 @@ if "node_colors" not in st.session_state:
     st.session_state.node_colors = {}
 if "excluded_uuids" not in st.session_state:
     st.session_state.excluded_uuids = set()
+if "fields_to_show_per_event" not in st.session_state:
+    st.session_state.fields_to_show_per_event = {}
 
 # --- Tag Colors ---
 TAG_COLORS = {
@@ -35,66 +37,25 @@ TAG_COLORS = {
 # ====== MITRE ATT&CK HARD-CODED DICTIONARY ======
 MITRE_TECHNIQUES = {
     "": {"name": "", "url": ""},
-    "T1059": {
-        "name": "Command and Scripting Interpreter",
-        "url": "https://attack.mitre.org/techniques/T1059/"
-    },
-    "T1086": {
-        "name": "PowerShell",
-        "url": "https://attack.mitre.org/techniques/T1086/"
-    },
-    "T1569": {
-        "name": "System Services",
-        "url": "https://attack.mitre.org/techniques/T1569/"
-    },
-    "T1027": {
-        "name": "Obfuscated Files or Information",
-        "url": "https://attack.mitre.org/techniques/T1027/"
-    },
-    "T1204": {
-        "name": "User Execution",
-        "url": "https://attack.mitre.org/techniques/T1204/"
-    },
-    "T1105": {
-        "name": "Ingress Tool Transfer",
-        "url": "https://attack.mitre.org/techniques/T1105/"
-    },
-    "T1003": {
-        "name": "OS Credential Dumping",
-        "url": "https://attack.mitre.org/techniques/T1003/"
-    },
-    "T1218": {
-        "name": "Signed Binary Proxy Execution",
-        "url": "https://attack.mitre.org/techniques/T1218/"
-    },
-    "T1047": {
-        "name": "Windows Management Instrumentation",
-        "url": "https://attack.mitre.org/techniques/T1047/"
-    },
-    "TA0010 Exfiltration": {
-        "name": "Exfiltration",
-        "url": "https://attack.mitre.org/tactics/TA0010/"
-    },
-    "T1033 System Owner/User Discovery": {
-        "name": "System Owner/User Discovery",
-        "url": "https://attack.mitre.org/techniques/T1033/"
-    },
-    "T1082 System Information Discovery": {
-        "name": "System Information Discovery",
-        "url": "https://attack.mitre.org/techniques/T1082/"
-    },
-    "T1047 Windows Management Instrumentation": {
-        "name": "Windows Management Instrumentation",
-        "url": "https://attack.mitre.org/techniques/T1047/"
-    },
-    "T1057 Process Discovery": {
-        "name": "Process Discovery",
-        "url": "https://attack.mitre.org/techniques/T1057/"
-    },
+    "T1059": {"name": "Command and Scripting Interpreter", "url": "https://attack.mitre.org/techniques/T1059/"},
+    "T1086": {"name": "PowerShell", "url": "https://attack.mitre.org/techniques/T1086/"},
+    "T1569": {"name": "System Services", "url": "https://attack.mitre.org/techniques/T1569/"},
+    "T1027": {"name": "Obfuscated Files or Information", "url": "https://attack.mitre.org/techniques/T1027/"},
+    "T1204": {"name": "User Execution", "url": "https://attack.mitre.org/techniques/T1204/"},
+    "T1105": {"name": "Ingress Tool Transfer", "url": "https://attack.mitre.org/techniques/T1105/"},
+    "T1003": {"name": "OS Credential Dumping", "url": "https://attack.mitre.org/techniques/T1003/"},
+    "T1218": {"name": "Signed Binary Proxy Execution", "url": "https://attack.mitre.org/techniques/T1218/"},
+    "T1047": {"name": "Windows Management Instrumentation", "url": "https://attack.mitre.org/techniques/T1047/"},
+    "TA0010 Exfiltration": {"name": "Exfiltration", "url": "https://attack.mitre.org/tactics/TA0010/"},
+    "T1033 System Owner/User Discovery": {"name": "System Owner/User Discovery", "url": "https://attack.mitre.org/techniques/T1033/"},
+    "T1082 System Information Discovery": {"name": "System Information Discovery", "url": "https://attack.mitre.org/techniques/T1082/"},
+    "T1047 Windows Management Instrumentation": {"name": "Windows Management Instrumentation", "url": "https://attack.mitre.org/techniques/T1047/"},
+    "T1057 Process Discovery": {"name": "Process Discovery", "url": "https://attack.mitre.org/techniques/T1057/"},
+    "T1074 Data Staged": {"name": "Data Staged", "url": "https://attack.mitre.org/techniques/T1074/"},
     "T1059 Command and Scripting Interpreter: PowerShell": {
         "name": "Command and Scripting Interpreter: PowerShell",
-        "url": "https://attack.mitre.org/techniques/T1059/001/"
-    }
+        "url": "https://attack.mitre.org/techniques/T1059/001/",
+    },
 }
 # ================================================
 
@@ -154,20 +115,33 @@ if not df.empty:
 
     st.sidebar.write(f"**Image:** {selected_event.get('Image', 'N/A')}")
     new_tag = st.sidebar.selectbox(
-        "Tag", ["", "Initial Access", "Execution", "Persistence", "C2", "Exfiltration", "Cleanup", "Enumeration", "Discovery"]
+        "Tag",
+        [
+            "",
+            "Initial Access",
+            "Execution",
+            "Persistence",
+            "C2",
+            "Exfiltration",
+            "Cleanup",
+            "Enumeration",
+            "Discovery",
+            "Collection"
+        ],
     )
     new_note = st.sidebar.text_area("Notes", value=selected_event.get("notes", ""))
 
     # ======= MITRE Technique Selection Dropdown =======
     mitre_ids = sorted(MITRE_TECHNIQUES.keys())
-    selected_mitre = st.sidebar.selectbox("MITRE Technique ID", mitre_ids, index=mitre_ids.index(selected_event.get("mitre", "") if selected_event.get("mitre", "") in mitre_ids else ""))
+    selected_mitre = st.sidebar.selectbox(
+        "MITRE Technique ID",
+        mitre_ids,
+        index=mitre_ids.index(selected_event.get("mitre", "") if selected_event.get("mitre", "") in mitre_ids else ""),
+    )
     if selected_mitre:
         mitre_info = MITRE_TECHNIQUES.get(selected_mitre, {"name": "", "url": ""})
         if mitre_info["name"]:
-            st.sidebar.markdown(
-                f"[{mitre_info['name']}]({mitre_info['url']})",
-                unsafe_allow_html=True
-            )
+            st.sidebar.markdown(f"[{mitre_info['name']}]({mitre_info['url']})", unsafe_allow_html=True)
     # ===================================================
 
     for i, evt in enumerate(st.session_state.event_store):
@@ -190,8 +164,8 @@ if not df.empty:
         st.sidebar.write(f"Total hidden: {len(hidden_events)}")
         for e in hidden_events:
             st.sidebar.markdown(f"- `{e['uuid']}` | **{e.get('Image', 'N/A')}**")
-            if st.sidebar.button(f"Unhide {e['uuid']}", key=e['uuid']):
-                st.session_state.excluded_uuids.remove(e['uuid'])
+            if st.sidebar.button(f"Unhide {e['uuid']}", key=e["uuid"]):
+                st.session_state.excluded_uuids.remove(e["uuid"])
 
     # --- Graph Visualization ---
     st.subheader("\U0001f310 Process Relationship Graph")
@@ -235,6 +209,25 @@ if not df.empty:
         if parent_guid:
             child_map[parent_guid].append(e)
 
+    # --- All keys & default fields for selection ---
+    all_keys = sorted(set().union(*[e.keys() for e in visible_events])) if visible_events else []
+    default_fields = ["CommandLine", "User", "IntegrityLevel", "ProcessId", "EventID"]
+
+    # --- Move multiselect widgets outside recursion: per-event in sidebar ---
+    st.sidebar.header("Select Fields Per Event")
+    for evt in visible_events:
+        event_id = evt["uuid"]
+        if event_id not in st.session_state.fields_to_show_per_event:
+            st.session_state.fields_to_show_per_event[event_id] = [f for f in default_fields if f in all_keys]
+
+        selected_fields = st.sidebar.multiselect(
+            f"Fields for event {event_id} ({evt.get('Image', 'Unknown')})",
+            options=all_keys,
+            default=st.session_state.fields_to_show_per_event[event_id],
+            key=f"fields_{event_id}",
+        )
+        st.session_state.fields_to_show_per_event[event_id] = selected_fields
+
     def get_tag_emoji(tag):
         return {
             "Initial Access": "\U0001f6aa",
@@ -245,6 +238,7 @@ if not df.empty:
             "Enumeration": "🔍",
             "Discovery": "💡",
             "Cleanup": "\U0001f9f9",
+            "Collection": "🗃️",
             "": "\U0001f9e9",
         }.get(tag, "\U0001f9e9")
 
@@ -274,12 +268,14 @@ if not df.empty:
         color = get_tag_color(tag)
         img = node.get("Image", "Unknown")
         time = node.get("UtcTime", "")
-        cmdline = node.get("CommandLine", "").strip()
         uuid_val = node.get("uuid", "")
 
         st.markdown(f"{prefix}{emoji}")
         indent = "&nbsp;&nbsp;&nbsp;" * (depth + 1)
-        st.markdown(f"{indent}<code>{img}</code> <span style='color:#888; font-family: monospace;'>[{uuid_val}]</span>", unsafe_allow_html=True)
+        st.markdown(
+            f"{indent}<code>{img}</code> <span style='color:#888; font-family: monospace;'>[{uuid_val}]</span>",
+            unsafe_allow_html=True,
+        )
 
         if tag:
             st.markdown(
@@ -298,13 +294,25 @@ if not df.empty:
             mitre_info = MITRE_TECHNIQUES[mitre_id]
             st.markdown(
                 f"{indent}🧩 <a href='{mitre_info['url']}' target='_blank'><code>{mitre_id}</code> - {mitre_info['name']}</a>",
-                unsafe_allow_html=True
+                unsafe_allow_html=True,
             )
         # ==========================================
 
-        if cmdline:
-            with st.expander("Show CommandLine", expanded=False):
-                st.code(cmdline, language="bash")
+        # Get the selected fields for this event from session state (no widgets here!)
+        selected_fields = st.session_state.fields_to_show_per_event.get(uuid_val, [])
+
+        # Show selected fields with expanders (except CommandLine, which gets special code formatting)
+        for field in selected_fields:
+            if field == "CommandLine":
+                cmdline = node.get("CommandLine", "").strip()
+                if cmdline:
+                    with st.expander("Show CommandLine", expanded=False):
+                        st.code(cmdline, language="bash")
+            else:
+                val = node.get(field, "")
+                if val:
+                    with st.expander(f"Show {field}", expanded=False):
+                        st.write(val)
 
         for idx, child in enumerate(children):
             has_siblings_below = idx < len(children) - 1
